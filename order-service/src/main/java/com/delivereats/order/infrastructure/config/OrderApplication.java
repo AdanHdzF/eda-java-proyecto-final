@@ -13,8 +13,11 @@ import com.delivereats.order.domain.port.in.CancelOrderUseCase;
 import com.delivereats.order.domain.port.in.CreateOrderUseCase;
 import com.delivereats.order.domain.port.in.GetOrderStatusUseCase;
 import com.delivereats.order.infrastructure.adapter.in.rest.OrderResource;
+import com.delivereats.order.infrastructure.adapter.out.event.OrderPublisher;
 import com.delivereats.order.infrastructure.adapter.out.persistence.InMemoryOrderRepository;
 import com.delivereats.order.infrastructure.adapter.out.rest.HttpKitchenAdapter;
+import com.delivereats.shared.infrastructure.messaging.EventBus;
+import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 
 public class OrderApplication {
 
@@ -26,9 +29,12 @@ public class OrderApplication {
 
 		String kitchenUrl = System.getenv().getOrDefault("NEXT_SERVICE_URL", "http://kitchen-service:8080");
 		HttpKitchenAdapter kitchenAdapter = new HttpKitchenAdapter(kitchenUrl);
+		EventBus eventBus = new KafkaEventBus();
+		OrderPublisher orderPublisher = new OrderPublisher(eventBus);
 
 		// ── Application service ──
-		OrderApplicationService applicationService = new OrderApplicationService(repository, kitchenAdapter);
+		OrderApplicationService applicationService = new OrderApplicationService(repository, kitchenAdapter,
+				orderPublisher);
 
 		// ── Jersey config with HK2 binding ──
 		ResourceConfig config = new ResourceConfig();
