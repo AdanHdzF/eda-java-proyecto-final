@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeliverEats - Seguimiento de Pedido</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛵</text></svg>">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <span class="logo-icon">🛵</span>
+            <span class="logo-text">DeliverEats</span>
+        </a>
+        <span class="tagline">Tu comida favorita, a un clic</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- No order state -->
+    <div class="no-order" id="no-order">
+        <div class="no-order-icon">🔍</div>
+        <h2>No se encontro ningun pedido</h2>
+        <p>Parece que no tienes un pedido activo. Haz uno nuevo.</p>
+        <a href="/" class="btn-primary" style="display:inline-flex;width:auto;padding:0.85rem 2rem;text-decoration:none;">
+            🍕 Hacer un pedido
+        </a>
+    </div>
+
+    <!-- Tracking content -->
+    <div id="tracking-content" style="display:none;">
+
+        <!-- Cancelled banner -->
+        <div class="cancelled-banner" id="cancelled-banner">
+            <h3>Pedido Cancelado</h3>
+            <p id="cancel-reason">Lo sentimos, tu pedido no pudo ser procesado.</p>
+        </div>
+
+        <!-- Order ID -->
+        <div class="tracking-header fade-in">
+            <div class="order-id-display">Pedido</div>
+            <div class="order-id-value" id="order-id">—</div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card fade-in">
+            <div class="card-title">📦 Estado del pedido</div>
+            <div class="timeline">
+                <div class="timeline-step pending" id="step-1">
+                    <div class="step-icon">📋</div>
+                    <div class="step-content">
+                        <div class="step-title">Pedido Recibido</div>
+                        <div class="step-detail">Tu pedido ha sido registrado en el sistema</div>
+                        <div class="step-time" id="step-1-time"></div>
+                    </div>
+                </div>
+                <div class="timeline-step pending" id="step-2">
+                    <div class="step-icon">👨‍🍳</div>
+                    <div class="step-content">
+                        <div class="step-title">Cocina Confirmada</div>
+                        <div class="step-detail">El restaurante esta preparando tu pedido</div>
+                        <div class="step-time" id="step-2-time"></div>
+                    </div>
+                </div>
+                <div class="timeline-step pending" id="step-3">
+                    <div class="step-icon">💳</div>
+                    <div class="step-content">
+                        <div class="step-title">Pago Procesado</div>
+                        <div class="step-detail">Tu pago ha sido verificado correctamente</div>
+                        <div class="step-time" id="step-3-time"></div>
+                    </div>
+                </div>
+                <div class="timeline-step pending" id="step-4">
+                    <div class="step-icon">🛵</div>
+                    <div class="step-content">
+                        <div class="step-title">Rider Asignado</div>
+                        <div class="step-detail" id="rider-detail">Buscando un rider cercano...</div>
+                        <div class="step-time" id="step-4-time"></div>
+                    </div>
+                </div>
+                <div class="timeline-step pending" id="step-5">
+                    <div class="step-icon">📧</div>
+                    <div class="step-content">
+                        <div class="step-title">Notificacion Enviada</div>
+                        <div class="step-detail">Te hemos enviado una confirmacion</div>
+                        <div class="step-time" id="step-5-time"></div>
+                    </div>
+                </div>
+                <div class="timeline-step pending" id="step-6">
+                    <div class="step-icon">📍</div>
+                    <div class="step-content">
+                        <div class="step-title">En Seguimiento</div>
+                        <div class="step-detail" id="tracking-detail">Numero de seguimiento disponible pronto</div>
+                        <div class="step-time" id="step-6-time"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-cards fade-in">
+            <div class="info-card">
+                <div class="info-card-label">Rider</div>
+                <div class="info-card-value" id="rider-name">Pendiente...</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-label">No. Seguimiento</div>
+                <div class="info-card-value" id="tracking-number">Pendiente...</div>
+            </div>
+        </div>
+
+        <!-- Polling indicator -->
+        <div style="text-align:center;margin-top:2rem;">
+            <p style="color:var(--text-dim);font-size:0.8rem;">
+                ⚡ Actualizando cada 10 segundos (polling) — <em>pronto lo mejoraremos con SSE</em>
+            </p>
+        </div>
+    </div>
+</main>
+
+<!-- Toasts -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/tracking.js"></script>
+</body>
+</html>
