@@ -12,9 +12,12 @@ import com.delivereats.rider.application.service.RiderApplicationService;
 import com.delivereats.rider.domain.port.in.AssignRiderUseCase;
 import com.delivereats.rider.domain.port.in.GetRiderStatusUseCase;
 import com.delivereats.rider.infrastructure.adapter.in.rest.RiderResource;
+import com.delivereats.rider.infrastructure.adapter.out.event.RiderPublisher;
 import com.delivereats.rider.infrastructure.adapter.out.persistence.InMemoryAssignmentRepository;
 import com.delivereats.rider.infrastructure.adapter.out.persistence.InMemoryRiderRepository;
 import com.delivereats.rider.infrastructure.adapter.out.rest.HttpNotificationAdapter;
+import com.delivereats.shared.infrastructure.messaging.EventBus;
+import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 
 public class RiderApplication {
 
@@ -23,8 +26,12 @@ public class RiderApplication {
 		InMemoryAssignmentRepository assignmentRepository = new InMemoryAssignmentRepository();
 		HttpNotificationAdapter notificationAdapter = new HttpNotificationAdapter();
 
+		// ── Event bus ──
+		EventBus eventBus = new KafkaEventBus();
+		RiderPublisher riderPublisher = new RiderPublisher(eventBus);
+
 		RiderApplicationService riderService = new RiderApplicationService(
-				riderRepository, assignmentRepository, notificationAdapter);
+				riderRepository, assignmentRepository, notificationAdapter, riderPublisher);
 
 		ResourceConfig config = new ResourceConfig();
 		config.register(RiderResource.class);
