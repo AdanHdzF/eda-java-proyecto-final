@@ -11,8 +11,11 @@ import com.delivereats.payment.application.service.PaymentApplicationService;
 import com.delivereats.payment.domain.port.out.PaymentRepositoryPort;
 import com.delivereats.payment.domain.port.out.RiderPort;
 import com.delivereats.payment.infrastructure.adapter.in.rest.PaymentResource;
+import com.delivereats.payment.infrastructure.adapter.out.event.PaymentPublisher;
 import com.delivereats.payment.infrastructure.adapter.out.persistence.InMemoryPaymentRepository;
 import com.delivereats.payment.infrastructure.adapter.out.rest.HttpRiderAdapter;
+import com.delivereats.shared.infrastructure.messaging.EventBus;
+import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 
 public class PaymentApplication {
 
@@ -23,8 +26,12 @@ public class PaymentApplication {
 		PaymentRepositoryPort repository = new InMemoryPaymentRepository();
 		RiderPort riderPort = new HttpRiderAdapter(nextServiceUrl);
 
+		// ── Event bus ──
+		EventBus eventBus = new KafkaEventBus();
+		PaymentPublisher paymentPublisher = new PaymentPublisher(eventBus);
+
 		// Application service
-		PaymentApplicationService service = new PaymentApplicationService(repository, riderPort);
+		PaymentApplicationService service = new PaymentApplicationService(repository, riderPort, paymentPublisher);
 
 		// REST resource
 		PaymentResource resource = new PaymentResource(service, service, service);
