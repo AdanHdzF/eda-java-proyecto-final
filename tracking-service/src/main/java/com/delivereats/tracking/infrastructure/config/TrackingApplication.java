@@ -7,9 +7,12 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import com.delivereats.shared.infrastructure.messaging.EventBus;
+import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 import com.delivereats.tracking.application.service.TrackingApplicationService;
 import com.delivereats.tracking.domain.port.out.TrackingRepositoryPort;
 import com.delivereats.tracking.infrastructure.adapter.in.rest.TrackingResource;
+import com.delivereats.tracking.infrastructure.adapter.out.event.TrackingPublisher;
 import com.delivereats.tracking.infrastructure.adapter.out.persistence.InMemoryTrackingRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -25,7 +28,12 @@ public class TrackingApplication {
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
 		TrackingRepositoryPort repository = new InMemoryTrackingRepository();
-		TrackingApplicationService trackingService = new TrackingApplicationService(repository);
+
+		// ── Event bus ──
+		EventBus eventBus = new KafkaEventBus();
+		TrackingPublisher trackingPublisher = new TrackingPublisher(eventBus);
+
+		TrackingApplicationService trackingService = new TrackingApplicationService(repository, trackingPublisher);
 
 		TrackingResource trackingResource = new TrackingResource(trackingService, trackingService);
 
