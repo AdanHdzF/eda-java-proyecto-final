@@ -8,6 +8,7 @@ import com.delivereats.order.application.dto.KitchenConfirmationResponse;
 import com.delivereats.order.application.dto.OrderItemDto;
 import com.delivereats.order.application.dto.OrderResponse;
 import com.delivereats.order.application.dto.OrderStatusDto;
+import com.delivereats.order.domain.event.OrderCreatedEvent;
 import com.delivereats.order.domain.exception.OrderNotFoundException;
 import com.delivereats.order.domain.model.Order;
 import com.delivereats.order.domain.model.OrderItem;
@@ -17,15 +18,19 @@ import com.delivereats.order.domain.port.in.CreateOrderUseCase;
 import com.delivereats.order.domain.port.in.GetOrderStatusUseCase;
 import com.delivereats.order.domain.port.out.KitchenPort;
 import com.delivereats.order.domain.port.out.OrderRepositoryPort;
+import com.delivereats.order.infrastructure.adapter.out.event.OrderPublisher;
 
 public class OrderApplicationService implements CreateOrderUseCase, GetOrderStatusUseCase, CancelOrderUseCase {
 
 	private final OrderRepositoryPort orderRepository;
 	private final KitchenPort kitchenPort;
+	private final OrderPublisher orderPublisher;
 
-	public OrderApplicationService(OrderRepositoryPort orderRepository, KitchenPort kitchenPort) {
+	public OrderApplicationService(OrderRepositoryPort orderRepository, KitchenPort kitchenPort,
+			OrderPublisher orderPublisher) {
 		this.orderRepository = orderRepository;
 		this.kitchenPort = kitchenPort;
+		this.orderPublisher = orderPublisher;
 	}
 
 	@Override
@@ -38,6 +43,10 @@ public class OrderApplicationService implements CreateOrderUseCase, GetOrderStat
 		orderRepository.save(order);
 
 		System.out.println("[OrderService] Order " + order.getId() + " created. Calling Kitchen Service (SYNC)...");
+
+		orderPublisher.publish("orders.created",
+				new OrderCreatedEvent(order.getId(), order.getCustomerId(), order.getCustomerName(),
+						order.getRestaurantName(), request.items(), order.getTotalAmount()));
 
 		// ── SYNCHRONOUS blocking call to Kitchen Service ──
 		List<OrderItemDto> itemDtos = request.items();
