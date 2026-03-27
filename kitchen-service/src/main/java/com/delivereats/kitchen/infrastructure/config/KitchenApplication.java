@@ -12,8 +12,11 @@ import com.delivereats.kitchen.domain.port.in.ConfirmOrderUseCase;
 import com.delivereats.kitchen.domain.port.out.KitchenOrderRepositoryPort;
 import com.delivereats.kitchen.domain.port.out.PaymentPort;
 import com.delivereats.kitchen.infrastructure.adapter.in.rest.KitchenResource;
+import com.delivereats.kitchen.infrastructure.adapter.out.event.KitchenPublisher;
 import com.delivereats.kitchen.infrastructure.adapter.out.persistence.InMemoryKitchenOrderRepository;
 import com.delivereats.kitchen.infrastructure.adapter.out.rest.HttpPaymentAdapter;
+import com.delivereats.shared.infrastructure.messaging.EventBus;
+import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -31,7 +34,13 @@ public class KitchenApplication {
 
 		KitchenOrderRepositoryPort repository = new InMemoryKitchenOrderRepository();
 		PaymentPort paymentPort = new HttpPaymentAdapter(nextServiceUrl, objectMapper);
-		ConfirmOrderUseCase confirmOrderUseCase = new KitchenApplicationService(repository, paymentPort);
+
+		// ── Event bus ──
+		EventBus eventBus = new KafkaEventBus();
+		KitchenPublisher kitchenPublisher = new KitchenPublisher(eventBus);
+
+		ConfirmOrderUseCase confirmOrderUseCase = new KitchenApplicationService(repository, paymentPort,
+				kitchenPublisher);
 
 		KitchenResource kitchenResource = new KitchenResource(confirmOrderUseCase, repository);
 
