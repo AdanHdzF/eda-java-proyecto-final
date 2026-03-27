@@ -29,6 +29,8 @@ public class OrderApplication {
 
 		String kitchenUrl = System.getenv().getOrDefault("NEXT_SERVICE_URL", "http://kitchen-service:8080");
 		HttpKitchenAdapter kitchenAdapter = new HttpKitchenAdapter(kitchenUrl);
+
+		// ── Event bus ──
 		EventBus eventBus = new KafkaEventBus();
 		OrderPublisher orderPublisher = new OrderPublisher(eventBus);
 
