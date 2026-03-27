@@ -12,8 +12,11 @@ import com.delivereats.notification.domain.port.in.SendNotificationUseCase;
 import com.delivereats.notification.domain.port.out.NotificationRepositoryPort;
 import com.delivereats.notification.domain.port.out.TrackingPort;
 import com.delivereats.notification.infrastructure.adapter.in.rest.NotificationResource;
+import com.delivereats.notification.infrastructure.adapter.out.event.NotificationPublisher;
 import com.delivereats.notification.infrastructure.adapter.out.persistence.InMemoryNotificationRepository;
 import com.delivereats.notification.infrastructure.adapter.out.rest.HttpTrackingAdapter;
+import com.delivereats.shared.infrastructure.messaging.EventBus;
+import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -31,7 +34,13 @@ public class NotificationApplication {
 
 		NotificationRepositoryPort repository = new InMemoryNotificationRepository();
 		TrackingPort trackingPort = new HttpTrackingAdapter(nextServiceUrl, objectMapper);
-		SendNotificationUseCase sendNotificationUseCase = new NotificationApplicationService(repository, trackingPort);
+
+		// ── Event bus ──
+		EventBus eventBus = new KafkaEventBus();
+		NotificationPublisher notificationPublisher = new NotificationPublisher(eventBus);
+
+		SendNotificationUseCase sendNotificationUseCase = new NotificationApplicationService(repository, trackingPort,
+				notificationPublisher);
 
 		NotificationResource notificationResource = new NotificationResource(sendNotificationUseCase);
 
