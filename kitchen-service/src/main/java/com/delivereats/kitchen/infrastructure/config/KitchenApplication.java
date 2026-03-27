@@ -11,6 +11,7 @@ import com.delivereats.kitchen.application.service.KitchenApplicationService;
 import com.delivereats.kitchen.domain.port.in.ConfirmOrderUseCase;
 import com.delivereats.kitchen.domain.port.out.KitchenOrderRepositoryPort;
 import com.delivereats.kitchen.domain.port.out.PaymentPort;
+import com.delivereats.kitchen.infrastructure.adapter.in.event.KitchenSubscriber;
 import com.delivereats.kitchen.infrastructure.adapter.in.rest.KitchenResource;
 import com.delivereats.kitchen.infrastructure.adapter.out.event.KitchenPublisher;
 import com.delivereats.kitchen.infrastructure.adapter.out.persistence.InMemoryKitchenOrderRepository;
@@ -41,6 +42,8 @@ public class KitchenApplication {
 
 		ConfirmOrderUseCase confirmOrderUseCase = new KitchenApplicationService(repository, paymentPort,
 				kitchenPublisher);
+
+		new KitchenSubscriber(eventBus, confirmOrderUseCase);
 
 		KitchenResource kitchenResource = new KitchenResource(confirmOrderUseCase, repository);
 
