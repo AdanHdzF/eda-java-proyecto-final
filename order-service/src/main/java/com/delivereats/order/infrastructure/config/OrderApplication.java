@@ -12,6 +12,7 @@ import com.delivereats.order.application.service.OrderApplicationService;
 import com.delivereats.order.domain.port.in.CancelOrderUseCase;
 import com.delivereats.order.domain.port.in.CreateOrderUseCase;
 import com.delivereats.order.domain.port.in.GetOrderStatusUseCase;
+import com.delivereats.order.infrastructure.adapter.in.event.OrderSubscriber;
 import com.delivereats.order.infrastructure.adapter.in.rest.OrderResource;
 import com.delivereats.order.infrastructure.adapter.out.event.OrderPublisher;
 import com.delivereats.order.infrastructure.adapter.out.persistence.InMemoryOrderRepository;
@@ -37,6 +38,8 @@ public class OrderApplication {
 		// ── Application service ──
 		OrderApplicationService applicationService = new OrderApplicationService(repository, kitchenAdapter,
 				orderPublisher);
+
+		new OrderSubscriber(eventBus, applicationService);
 
 		// ── Jersey config with HK2 binding ──
 		ResourceConfig config = new ResourceConfig();
