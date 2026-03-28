@@ -3,9 +3,6 @@ package com.delivereats.order.application.service;
 import java.util.List;
 
 import com.delivereats.order.application.dto.CreateOrderRequest;
-import com.delivereats.order.application.dto.KitchenConfirmationRequest;
-import com.delivereats.order.application.dto.KitchenConfirmationResponse;
-import com.delivereats.order.application.dto.OrderItemDto;
 import com.delivereats.order.application.dto.OrderResponse;
 import com.delivereats.order.application.dto.OrderStatusDto;
 import com.delivereats.order.domain.event.OrderCreatedEvent;
@@ -45,35 +42,61 @@ public class OrderApplicationService implements CreateOrderUseCase, GetOrderStat
 		System.out.println("[OrderService] Order " + order.getId() + " created. Calling Kitchen Service (SYNC)...");
 
 		orderPublisher.publish("orders.created",
-				new OrderCreatedEvent(order.getId(), order.getCustomerId(), order.getCustomerName(),
+				new OrderCreatedEvent(order.getId(), order.getCustomerId(),
+						order.getCustomerName(),
 						order.getRestaurantName(), request.items(), order.getTotalAmount()));
 
 		// ── SYNCHRONOUS blocking call to Kitchen Service ──
-		List<OrderItemDto> itemDtos = request.items();
-		KitchenConfirmationRequest kitchenRequest = new KitchenConfirmationRequest(
-				order.getId(), itemDtos, request.restaurantName());
+		// List<OrderItemDto> itemDtos = request.items();
+		// KitchenConfirmationRequest kitchenRequest = new KitchenConfirmationRequest(
+		// order.getId(), itemDtos, request.restaurantName());
 
-		KitchenConfirmationResponse kitchenResponse = kitchenPort.requestConfirmation(kitchenRequest);
+		// KitchenConfirmationResponse kitchenResponse =
+		// kitchenPort.requestConfirmation(kitchenRequest);
 
-		if (kitchenResponse.confirmed()) {
-			order.updateStatus(OrderStatus.KITCHEN_CONFIRMED);
-			orderRepository.updateStatus(order.getId(), OrderStatus.KITCHEN_CONFIRMED);
-			System.out.println("[OrderService] Kitchen confirmed order " + order.getId()
-					+ " (ETA: " + kitchenResponse.estimatedMinutes() + " min)");
-		}
+		// if (kitchenResponse.confirmed()) {
+		// order.updateStatus(OrderStatus.KITCHEN_CONFIRMED);
+		// orderRepository.updateStatus(order.getId(), OrderStatus.KITCHEN_CONFIRMED);
+		// System.out.println("[OrderService] Kitchen confirmed order " + order.getId()
+		// + " (ETA: " + kitchenResponse.estimatedMinutes() + " min)");
+		// }
 
+		// return new OrderResponse(
+		// order.getId(),
+		// order.getStatus().name(),
+		// order.getTotalAmount(),
+		// "Order processed. Kitchen " + (kitchenResponse.confirmed() ? "confirmed" :
+		// "rejected")
+		// + ". ETA: " + kitchenResponse.estimatedMinutes() + " min");
 		return new OrderResponse(
 				order.getId(),
 				order.getStatus().name(),
 				order.getTotalAmount(),
-				"Order processed. Kitchen " + (kitchenResponse.confirmed() ? "confirmed" : "rejected")
-						+ ". ETA: " + kitchenResponse.estimatedMinutes() + " min");
+				"Order created and published to Kitchen Service. Awaiting confirmation...");
 	}
 
 	@Override
 	public OrderStatusDto getOrderStatus(String orderId) {
 		Order order = orderRepository.findById(orderId)
 				.orElseThrow(() -> new OrderNotFoundException(orderId));
+
+		return new OrderStatusDto(
+				order.getId(),
+				order.getCustomerName(),
+				order.getRestaurantName(),
+				order.getStatus().name(),
+				order.getTotalAmount(),
+				null, null, null, null);
+	}
+
+	@Override
+	public OrderStatusDto updateOrderStatus(String orderId, OrderStatus newStatus) {
+		Order order = orderRepository.findById(orderId)
+				.orElseThrow(() -> new OrderNotFoundException(orderId));
+
+		order.updateStatus(newStatus);
+		orderRepository.updateStatus(orderId, newStatus);
+		System.out.println("[OrderService] Order " + orderId + " status updated to " + newStatus);
 
 		return new OrderStatusDto(
 				order.getId(),
