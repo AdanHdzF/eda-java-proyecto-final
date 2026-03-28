@@ -3,10 +3,8 @@ package com.delivereats.notification.application.service;
 import java.time.Instant;
 import java.util.UUID;
 
-import com.delivereats.notification.application.dto.CreateTrackingRequest;
 import com.delivereats.notification.application.dto.NotificationRequest;
 import com.delivereats.notification.application.dto.NotificationResponse;
-import com.delivereats.notification.application.dto.TrackingResponse;
 import com.delivereats.notification.domain.event.NotificationSentEvent;
 import com.delivereats.notification.domain.model.Notification;
 import com.delivereats.notification.domain.model.NotificationType;
@@ -59,11 +57,14 @@ public class NotificationApplicationService implements SendNotificationUseCase {
 				new NotificationSentEvent(notification.getOrderId(), notification.getType().name(),
 						notification.getRecipient()));
 
-		System.out.println("[Notification] Calling Tracking Service for order: " + request.orderId());
-		TrackingResponse trackingResponse = trackingPort.createTracking(
-				new CreateTrackingRequest(request.orderId(), "Rider-" + request.orderId().substring(0, 4),
-						"30 minutes"));
-		System.out.println("[Notification] Tracking created: " + trackingResponse.trackingNumber());
+		// System.out.println("[Notification] Calling Tracking Service for order: " +
+		// request.orderId());
+		// TrackingResponse trackingResponse = trackingPort.createTracking(
+		// new CreateTrackingRequest(request.orderId(), "Rider-" +
+		// request.orderId().substring(0, 4),
+		// "30 minutes"));
+		// System.out.println("[Notification] Tracking created: " +
+		// trackingResponse.trackingNumber());
 
 		return new NotificationResponse(notificationId.toString(), true);
 	}
