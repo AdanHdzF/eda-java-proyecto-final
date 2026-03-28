@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.delivereats.kitchen.application.dto.KitchenConfirmationRequest;
 import com.delivereats.kitchen.application.dto.KitchenConfirmationResponse;
-import com.delivereats.kitchen.application.dto.PaymentRequest;
 import com.delivereats.kitchen.domain.event.KitchenConfirmedEvent;
 import com.delivereats.kitchen.domain.model.KitchenOrder;
 import com.delivereats.kitchen.domain.model.KitchenStatus;
@@ -58,15 +57,17 @@ public class KitchenApplicationService implements ConfirmOrderUseCase {
 
 		int estimatedMinutes = 25;
 
-		kitchenPublisher.publish("kitchen.confirmed",
-				new KitchenConfirmedEvent(request.orderId(), estimatedMinutes));
-
 		double totalAmount = request.items().stream()
 				.mapToDouble(item -> item.price() * item.quantity())
 				.sum();
 
-		System.out.println("[Kitchen] Requesting payment of $" + totalAmount + " for order: " + request.orderId());
-		paymentPort.requestPayment(new PaymentRequest(request.orderId(), totalAmount, "customer"));
+		kitchenPublisher.publish("kitchen.confirmed",
+				new KitchenConfirmedEvent(request.orderId(), estimatedMinutes, totalAmount));
+
+		// System.out.println("[Kitchen] Requesting payment of $" + totalAmount + " for
+		// order: " + request.orderId());
+		// paymentPort.requestPayment(new PaymentRequest(request.orderId(), totalAmount,
+		// "customer"));
 
 		System.out.println(
 				"[Kitchen] Order " + request.orderId() + " CONFIRMED. Estimated: " + estimatedMinutes + " min");
