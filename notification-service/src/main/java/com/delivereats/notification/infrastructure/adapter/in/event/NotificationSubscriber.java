@@ -17,7 +17,7 @@ public class NotificationSubscriber {
 
 	private void onRiderAssigned(RiderAssignedEvent event) {
 		System.out.println(
-				"************************* [Rider] ************************* Received [rider.assigned] event: "
+				"************************* [Notification] ************************* Received [rider.assigned] event: "
 						+ event);
 
 		sendNotificationUseCase
