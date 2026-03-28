@@ -62,7 +62,8 @@ public class KitchenApplicationService implements ConfirmOrderUseCase {
 				.sum();
 
 		kitchenPublisher.publish("kitchen.confirmed",
-				new KitchenConfirmedEvent(request.orderId(), estimatedMinutes, totalAmount));
+				new KitchenConfirmedEvent(request.orderId(), request.customerId(), request.customerName(),
+						estimatedMinutes, totalAmount));
 
 		// System.out.println("[Kitchen] Requesting payment of $" + totalAmount + " for
 		// order: " + request.orderId());
