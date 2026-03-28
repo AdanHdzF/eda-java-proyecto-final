@@ -11,6 +11,7 @@ import com.delivereats.shared.infrastructure.messaging.EventBus;
 import com.delivereats.shared.infrastructure.messaging.KafkaEventBus;
 import com.delivereats.tracking.application.service.TrackingApplicationService;
 import com.delivereats.tracking.domain.port.out.TrackingRepositoryPort;
+import com.delivereats.tracking.infrastructure.adapter.in.event.TrackingSubscriber;
 import com.delivereats.tracking.infrastructure.adapter.in.rest.TrackingResource;
 import com.delivereats.tracking.infrastructure.adapter.out.event.TrackingPublisher;
 import com.delivereats.tracking.infrastructure.adapter.out.persistence.InMemoryTrackingRepository;
@@ -34,6 +35,8 @@ public class TrackingApplication {
 		TrackingPublisher trackingPublisher = new TrackingPublisher(eventBus);
 
 		TrackingApplicationService trackingService = new TrackingApplicationService(repository, trackingPublisher);
+
+		new TrackingSubscriber(eventBus, trackingService);
 
 		TrackingResource trackingResource = new TrackingResource(trackingService, trackingService);
 
