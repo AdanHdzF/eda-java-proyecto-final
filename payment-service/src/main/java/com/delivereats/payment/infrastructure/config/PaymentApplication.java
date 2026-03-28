@@ -10,6 +10,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import com.delivereats.payment.application.service.PaymentApplicationService;
 import com.delivereats.payment.domain.port.out.PaymentRepositoryPort;
 import com.delivereats.payment.domain.port.out.RiderPort;
+import com.delivereats.payment.infrastructure.adapter.in.event.PaymentSubscriber;
 import com.delivereats.payment.infrastructure.adapter.in.rest.PaymentResource;
 import com.delivereats.payment.infrastructure.adapter.out.event.PaymentPublisher;
 import com.delivereats.payment.infrastructure.adapter.out.persistence.InMemoryPaymentRepository;
@@ -32,6 +33,8 @@ public class PaymentApplication {
 
 		// Application service
 		PaymentApplicationService service = new PaymentApplicationService(repository, riderPort, paymentPublisher);
+
+		new PaymentSubscriber(eventBus, service);
 
 		// REST resource
 		PaymentResource resource = new PaymentResource(service, service, service);
