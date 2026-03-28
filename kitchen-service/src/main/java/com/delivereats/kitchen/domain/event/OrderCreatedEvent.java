@@ -2,7 +2,7 @@ package com.delivereats.kitchen.domain.event;
 
 import java.util.List;
 
-import com.delivereats.kitchen.application.dto.KitchenItemDto;
+import com.delivereats.kitchen.application.dto.OrderItemDto;
 import com.delivereats.shared.domain.event.DomainEvent;
 
 public record OrderCreatedEvent(
@@ -10,6 +10,6 @@ public record OrderCreatedEvent(
 		String customerId,
 		String customerName,
 		String restaurantName,
-		List<KitchenItemDto> items,
+		List<OrderItemDto> items,
 		double totalAmount) implements DomainEvent {
 }

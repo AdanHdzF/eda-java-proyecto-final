@@ -6,6 +6,6 @@ public record KitchenConfirmationRequest(
 		String orderId,
 		String customerId,
 		String customerName,
-		List<KitchenItemDto> items,
+		List<OrderItemDto> items,
 		String restaurantName) {
 }
