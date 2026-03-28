@@ -20,14 +20,15 @@ public class KitchenSubscriber {
 	private void onOrderCreated(OrderCreatedEvent event) {
 
 		System.out.println(
-				"************************* [Kitchen] ************************* Received order created event: "
+				"************************* [Kitchen] ************************* Received [orders.created] event: "
 						+ event);
 
 		@SuppressWarnings("unchecked")
 		List<KitchenItemDto> kitchenItems = (List<KitchenItemDto>) (List<?>) event.items();
 
 		confirmOrderUseCase.confirmOrder(
-				new KitchenConfirmationRequest(event.orderId(), kitchenItems, event.restaurantName()));
+				new KitchenConfirmationRequest(event.orderId(), event.customerId(), event.customerName(), kitchenItems,
+						event.restaurantName()));
 
 	}
 

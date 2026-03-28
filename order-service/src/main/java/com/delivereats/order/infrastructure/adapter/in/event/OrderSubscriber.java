@@ -16,7 +16,7 @@ public class OrderSubscriber {
 
 	private void onKitchenConfirmed(KitchenConfirmedEvent event) {
 		System.out.println(
-				"************************* [Order] ************************* Received kitchen confirmed event: "
+				"************************* [Order] ************************* Received [kitchen.confirmed] event: "
 						+ event);
 
 		orderApplicationService.updateOrderStatus(event.orderId(), OrderStatus.KITCHEN_CONFIRMED);
