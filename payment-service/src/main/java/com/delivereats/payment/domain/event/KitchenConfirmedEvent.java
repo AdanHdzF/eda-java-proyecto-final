@@ -1,4 +1,4 @@
-package com.delivereats.order.domain.event;
+package com.delivereats.payment.domain.event;
 
 import com.delivereats.shared.domain.event.DomainEvent;
 
