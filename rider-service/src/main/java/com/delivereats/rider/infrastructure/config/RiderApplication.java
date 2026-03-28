@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import com.delivereats.rider.application.service.RiderApplicationService;
 import com.delivereats.rider.domain.port.in.AssignRiderUseCase;
 import com.delivereats.rider.domain.port.in.GetRiderStatusUseCase;
+import com.delivereats.rider.infrastructure.adapter.in.event.RiderSubscriber;
 import com.delivereats.rider.infrastructure.adapter.in.rest.RiderResource;
 import com.delivereats.rider.infrastructure.adapter.out.event.RiderPublisher;
 import com.delivereats.rider.infrastructure.adapter.out.persistence.InMemoryAssignmentRepository;
@@ -32,6 +33,8 @@ public class RiderApplication {
 
 		RiderApplicationService riderService = new RiderApplicationService(
 				riderRepository, assignmentRepository, notificationAdapter, riderPublisher);
+
+		new RiderSubscriber(eventBus, riderService);
 
 		ResourceConfig config = new ResourceConfig();
 		config.register(RiderResource.class);

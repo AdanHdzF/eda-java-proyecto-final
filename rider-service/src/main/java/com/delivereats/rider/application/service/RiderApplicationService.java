@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import com.delivereats.rider.application.dto.AssignRiderRequest;
 import com.delivereats.rider.application.dto.AssignRiderResponse;
-import com.delivereats.rider.application.dto.NotificationRequest;
 import com.delivereats.rider.application.dto.RiderStatusResponse;
 import com.delivereats.rider.domain.event.RiderAssignedEvent;
 import com.delivereats.rider.domain.model.Assignment;
@@ -61,11 +60,11 @@ public class RiderApplicationService implements AssignRiderUseCase, GetRiderStat
 		riderPublisher.publish("rider.assigned", new RiderAssignedEvent(
 				request.orderId(), rider.getId(), rider.getName(), estimatedMinutes));
 
-		notificationPort.sendNotification(new NotificationRequest(
-				request.orderId(),
-				"RIDER_ASSIGNED",
-				rider.getName(),
-				"Rider " + rider.getName() + " asignado a tu pedido"));
+		// notificationPort.sendNotification(new NotificationRequest(
+		// request.orderId(),
+		// "RIDER_ASSIGNED",
+		// rider.getName(),
+		// "Rider " + rider.getName() + " asignado a tu pedido"));
 
 		return new AssignRiderResponse(rider.getId(), rider.getName(), estimatedMinutes);
 	}
