@@ -1,7 +1,5 @@
 package com.delivereats.payment.application.service;
 
-import com.delivereats.payment.application.dto.AssignRiderRequest;
-import com.delivereats.payment.application.dto.AssignRiderResponse;
 import com.delivereats.payment.application.dto.PaymentRequest;
 import com.delivereats.payment.application.dto.PaymentResponse;
 import com.delivereats.payment.application.dto.PaymentStatusResponse;
@@ -53,11 +51,14 @@ public class PaymentApplicationService implements ProcessPaymentUseCase, RefundP
 						payment.getTransactionId()));
 
 		// Call Rider Service synchronously
-		System.out.println("[PaymentService] Requesting rider assignment for order: " + request.orderId());
-		AssignRiderRequest riderRequest = new AssignRiderRequest(request.orderId(), "Restaurant Address TBD");
-		AssignRiderResponse riderResponse = riderPort.requestRider(riderRequest);
-		System.out.println("[PaymentService] Rider assigned: " + riderResponse.riderName()
-				+ " (ETA: " + riderResponse.estimatedMinutes() + " min)");
+		// System.out.println("[PaymentService] Requesting rider assignment for order: "
+		// + request.orderId());
+		// AssignRiderRequest riderRequest = new AssignRiderRequest(request.orderId(),
+		// "Restaurant Address TBD");
+		// AssignRiderResponse riderResponse = riderPort.requestRider(riderRequest);
+		// System.out.println("[PaymentService] Rider assigned: " +
+		// riderResponse.riderName()
+		// + " (ETA: " + riderResponse.estimatedMinutes() + " min)");
 
 		return new PaymentResponse(payment.getId(), payment.getStatus().name(), payment.getTransactionId());
 	}

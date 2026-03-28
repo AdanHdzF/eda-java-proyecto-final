@@ -2,7 +2,7 @@ package com.delivereats.payment.infrastructure.adapter.in.event;
 
 import com.delivereats.payment.application.dto.PaymentRequest;
 import com.delivereats.payment.application.service.PaymentApplicationService;
-import com.delivereats.payment.domain.event.KitchenConfirmedEvent;
+import com.delivereats.payment.domain.event.OrderCreatedEvent;
 import com.delivereats.shared.infrastructure.messaging.EventBus;
 
 public class PaymentSubscriber {
@@ -11,13 +11,13 @@ public class PaymentSubscriber {
 	public PaymentSubscriber(EventBus eventBus, PaymentApplicationService paymentApplicationService) {
 		this.paymentApplicationService = paymentApplicationService;
 
-		eventBus.subscribe("kitchen.confirmed",
-				KitchenConfirmedEvent.class, this::onKitchenConfirmed, "payment-service");
+		eventBus.subscribe("orders.created",
+				OrderCreatedEvent.class, this::onOrderCreated, "payment-service");
 	}
 
-	private void onKitchenConfirmed(KitchenConfirmedEvent event) {
+	private void onOrderCreated(OrderCreatedEvent event) {
 		System.out.println(
-				"************************* [Payment] ************************* Received [kitchen.confirmed] event: "
+				"************************* [Payment] ************************* Received [orders.created] event: "
 						+ event);
 
 		paymentApplicationService.processPayment(
