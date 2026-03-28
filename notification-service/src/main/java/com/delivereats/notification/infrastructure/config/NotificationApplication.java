@@ -11,6 +11,7 @@ import com.delivereats.notification.application.service.NotificationApplicationS
 import com.delivereats.notification.domain.port.in.SendNotificationUseCase;
 import com.delivereats.notification.domain.port.out.NotificationRepositoryPort;
 import com.delivereats.notification.domain.port.out.TrackingPort;
+import com.delivereats.notification.infrastructure.adapter.in.event.NotificationSubscriber;
 import com.delivereats.notification.infrastructure.adapter.in.rest.NotificationResource;
 import com.delivereats.notification.infrastructure.adapter.out.event.NotificationPublisher;
 import com.delivereats.notification.infrastructure.adapter.out.persistence.InMemoryNotificationRepository;
@@ -41,6 +42,8 @@ public class NotificationApplication {
 
 		SendNotificationUseCase sendNotificationUseCase = new NotificationApplicationService(repository, trackingPort,
 				notificationPublisher);
+
+		new NotificationSubscriber(eventBus, sendNotificationUseCase);
 
 		NotificationResource notificationResource = new NotificationResource(sendNotificationUseCase);
 
