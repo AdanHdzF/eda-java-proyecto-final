@@ -12,7 +12,7 @@ public class RiderSubscriber {
 		this.riderApplicationService = riderApplicationService;
 
 		eventBus.subscribe("orders.created",
-				OrderCreatedEvent.class, this::onOrderCreated, "payment-service");
+				OrderCreatedEvent.class, this::onOrderCreated, "rider-service");
 	}
 
 	private void onOrderCreated(OrderCreatedEvent event) {
